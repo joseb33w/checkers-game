@@ -22,7 +22,6 @@ html, body {
   overflow-x: hidden;
 }
 body {
-  min-height: 100vh;
   font-family: Inter, system-ui, -apple-system, sans-serif;
   color: var(--ink);
   background:
@@ -235,6 +234,7 @@ button { cursor: pointer; }
   border: 1px solid var(--line);
   backdrop-filter: blur(12px);
   box-shadow: var(--shadow);
+  min-width: 0;
 }
 
 .board {
@@ -243,7 +243,7 @@ button { cursor: pointer; }
   grid-template-rows: repeat(8, 1fr);
   aspect-ratio: 1 / 1;
   width: 100%;
-  max-width: 640px;
+  max-width: min(640px, 70vh);
   margin: 0 auto;
   border-radius: 14px;
   overflow: hidden;
@@ -373,9 +373,11 @@ button { cursor: pointer; }
   .topbar { padding: 12px; }
   .mode-toggle { width: 100%; }
   .mode-btn { flex: 1; }
+  .board { max-width: min(560px, 90vw, 60vh); }
 }
 @media (max-width: 480px) {
   .brand small { display: none; }
   .board-wrap { padding: 10px; }
   .side-card { padding: 14px; gap: 10px; }
+  .board { max-width: min(94vw, 55vh); }
 }
