@@ -16,7 +16,11 @@
 }
 
 * { box-sizing: border-box; }
-html, body { margin: 0; padding: 0; }
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
 body {
   min-height: 100vh;
   font-family: Inter, system-ui, -apple-system, sans-serif;
@@ -25,7 +29,8 @@ body {
     radial-gradient(circle at 20% 10%, rgba(230, 57, 70, 0.18), transparent 30%),
     radial-gradient(circle at 85% 85%, rgba(122, 74, 43, 0.25), transparent 35%),
     linear-gradient(135deg, #0d1117 0%, #1a1410 50%, #0a0a0a 100%);
-  overflow-x: hidden;
+  background-attachment: fixed;
+  position: relative;
 }
 button, input { font: inherit; }
 button { cursor: pointer; }
