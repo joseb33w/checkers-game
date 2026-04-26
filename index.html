@@ -2,38 +2,56 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Checkers</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     html, body {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
       width: 100%;
-      max-width: 100%;
-      overflow-x: hidden;
+      height: 100%;
+      overflow: hidden;
       background: #1a1410;
+      -webkit-overflow-scrolling: auto;
+      overscroll-behavior: none;
+      touch-action: manipulation;
     }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
       color: #f3eada;
-      padding: 12px;
-      min-height: 100vh;
+    }
+
+    .app {
+      position: absolute;
+      inset: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+      padding: 10px;
+      padding-top: max(10px, env(safe-area-inset-top));
+      padding-bottom: max(10px, env(safe-area-inset-bottom));
     }
 
     .wrap {
-      max-width: 480px;
+      max-width: 460px;
       margin: 0 auto;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
     }
 
     .card {
       background: #2a1d15;
       border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 14px;
-      padding: 14px;
+      border-radius: 12px;
+      padding: 12px;
     }
 
     .header {
@@ -43,7 +61,7 @@
       gap: 10px;
     }
     .title {
-      font-size: 1.3rem;
+      font-size: 1.2rem;
       font-weight: 800;
       letter-spacing: -0.02em;
     }
@@ -60,10 +78,10 @@
       border: 0;
       background: transparent;
       color: #b3a890;
-      padding: 7px 12px;
+      padding: 6px 11px;
       border-radius: 999px;
       font-weight: 700;
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       cursor: pointer;
       font-family: inherit;
     }
@@ -81,16 +99,15 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 10px;
+      padding: 8px 10px;
       border-radius: 10px;
       background: rgba(0,0,0,0.3);
       border: 2px solid transparent;
-      transition: border-color 0.2s;
     }
     .player.active { border-color: #ffd166; }
     .chip {
-      width: 26px;
-      height: 26px;
+      width: 22px;
+      height: 22px;
       border-radius: 50%;
       flex-shrink: 0;
     }
@@ -98,41 +115,38 @@
     .chip.black { background: radial-gradient(circle at 35% 30%, #5a5a5a, #1a1a1a 50%, #000); }
     .player-info { flex: 1; min-width: 0; }
     .player-info .role {
-      font-size: 0.65rem;
+      font-size: 0.6rem;
       font-weight: 700;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       color: #b3a890;
     }
     .player-info .name {
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       font-weight: 700;
     }
     .count {
-      font-size: 1.1rem;
+      font-size: 1rem;
       font-weight: 800;
     }
 
     .turn {
       text-align: center;
-      padding: 9px;
+      padding: 8px;
       border-radius: 10px;
       background: rgba(255,209,102,0.15);
       border: 1px solid rgba(255,209,102,0.3);
       font-weight: 700;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
     }
 
     .board-wrap {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
     .board {
-      width: 100%;
-      max-width: 400px;
-      aspect-ratio: 1 / 1;
       display: grid;
       grid-template-columns: repeat(8, 1fr);
       grid-template-rows: repeat(8, 1fr);
@@ -204,9 +218,9 @@
     .status {
       text-align: center;
       color: #b3a890;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       font-weight: 600;
-      padding: 4px;
+      padding: 2px;
     }
 
     .controls {
@@ -217,7 +231,7 @@
     .btn {
       border: 0;
       border-radius: 10px;
-      padding: 11px;
+      padding: 10px;
       font-weight: 700;
       font-size: 0.9rem;
       cursor: pointer;
@@ -249,59 +263,61 @@
       background: #2a1d15;
       border: 1px solid rgba(255,255,255,0.12);
       border-radius: 16px;
-      padding: 28px 22px;
+      padding: 24px 20px;
       text-align: center;
       max-width: 320px;
       width: 100%;
     }
-    .modal .icon { font-size: 3rem; margin-bottom: 8px; }
-    .modal h2 { font-size: 1.5rem; margin-bottom: 6px; }
-    .modal p { color: #b3a890; margin-bottom: 18px; font-size: 0.9rem; }
+    .modal .icon { font-size: 2.6rem; margin-bottom: 6px; }
+    .modal h2 { font-size: 1.4rem; margin-bottom: 6px; }
+    .modal p { color: #b3a890; margin-bottom: 16px; font-size: 0.85rem; }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="card">
-      <div class="header">
-        <div class="title"><span class="crown">♚</span>Checkers</div>
-        <div class="modes">
-          <button class="mode-btn active" data-mode="pvc" type="button">vs Computer</button>
-          <button class="mode-btn" data-mode="pvp" type="button">vs Friend</button>
+  <div class="app" id="app">
+    <div class="wrap">
+      <div class="card">
+        <div class="header">
+          <div class="title"><span class="crown">♚</span>Checkers</div>
+          <div class="modes">
+            <button class="mode-btn active" data-mode="pvc" type="button">vs Computer</button>
+            <button class="mode-btn" data-mode="pvp" type="button">vs Friend</button>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="card">
-      <div class="players">
-        <div class="player active" id="playerRed">
-          <div class="chip red"></div>
-          <div class="player-info">
-            <div class="role">Red</div>
-            <div class="name" id="redLabel">You</div>
+      <div class="card">
+        <div class="players">
+          <div class="player active" id="playerRed">
+            <div class="chip red"></div>
+            <div class="player-info">
+              <div class="role">Red</div>
+              <div class="name" id="redLabel">You</div>
+            </div>
+            <div class="count" id="redScore">12</div>
           </div>
-          <div class="count" id="redScore">12</div>
-        </div>
-        <div class="player" id="playerBlack">
-          <div class="chip black"></div>
-          <div class="player-info">
-            <div class="role">Black</div>
-            <div class="name" id="blackLabel">CPU</div>
+          <div class="player" id="playerBlack">
+            <div class="chip black"></div>
+            <div class="player-info">
+              <div class="role">Black</div>
+              <div class="name" id="blackLabel">CPU</div>
+            </div>
+            <div class="count" id="blackScore">12</div>
           </div>
-          <div class="count" id="blackScore">12</div>
         </div>
       </div>
-    </div>
 
-    <div class="turn" id="turnPill">Your turn</div>
+      <div class="turn" id="turnPill">Your turn</div>
 
-    <div class="board-wrap">
-      <div class="board" id="board"></div>
-      <div class="status" id="status">Pick a red piece to move.</div>
-    </div>
+      <div class="board-wrap">
+        <div class="board" id="board"></div>
+        <div class="status" id="status">Pick a red piece to move.</div>
+      </div>
 
-    <div class="controls">
-      <button class="btn primary" id="newGameBtn" type="button">New game</button>
-      <button class="btn ghost" id="undoBtn" type="button">Undo</button>
+      <div class="controls">
+        <button class="btn primary" id="newGameBtn" type="button">New game</button>
+        <button class="btn ghost" id="undoBtn" type="button">Undo</button>
+      </div>
     </div>
   </div>
 
@@ -324,6 +340,7 @@
       history: [], gameOver: false, aiThinking: false
     };
     var els = {
+      app: document.getElementById('app'),
       board: document.getElementById('board'),
       redLabel: document.getElementById('redLabel'),
       blackLabel: document.getElementById('blackLabel'),
@@ -342,9 +359,31 @@
       playAgainBtn: document.getElementById('playAgainBtn')
     };
 
+    function sizeBoard() {
+      try {
+        var vw = window.innerWidth;
+        var vh = window.innerHeight;
+        // available width inside .wrap (max 460, minus 20 padding)
+        var availW = Math.min(460, vw) - 20;
+        // estimated UI chrome above + below the board = ~270px
+        var availH = vh - 270;
+        var size = Math.max(220, Math.min(availW, availH, 420));
+        size = Math.floor(size);
+        els.board.style.width = size + 'px';
+        els.board.style.height = size + 'px';
+      } catch (e) {
+        console.error('sizeBoard error:', e.message);
+      }
+    }
+
     function init() {
       try {
         buildBoard();
+        sizeBoard();
+        window.addEventListener('resize', sizeBoard);
+        window.addEventListener('orientationchange', function() {
+          setTimeout(sizeBoard, 200);
+        });
         els.newGameBtn.addEventListener('click', newGame);
         els.undoBtn.addEventListener('click', undo);
         els.playAgainBtn.addEventListener('click', function() {
