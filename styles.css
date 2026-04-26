@@ -11,14 +11,13 @@
   --capture: rgba(95, 241, 210, 0.6);
   --selected: rgba(255, 209, 102, 0.85);
   --shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+  --board-size: 520px;
 }
 
-* { box-sizing: border-box; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
 html, body {
-  margin: 0;
-  padding: 0;
-  height: auto;
+  width: 100%;
   overflow-x: hidden;
 }
 
@@ -30,14 +29,14 @@ body {
     radial-gradient(circle at 85% 85%, rgba(122, 74, 43, 0.22), transparent 45%),
     linear-gradient(135deg, #0d1117 0%, #1a1410 50%, #0a0a0a 100%);
   background-attachment: fixed;
-  min-height: 100vh;
 }
 
 button, input { font: inherit; }
 button { cursor: pointer; }
 
 .shell {
-  width: min(1180px, 100%);
+  width: 100%;
+  max-width: 1180px;
   margin: 0 auto;
   padding: 16px;
 }
@@ -209,23 +208,24 @@ button { cursor: pointer; }
 .rules li { margin-bottom: 4px; }
 
 .board-wrap {
-  display: grid;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: 12px;
   padding: 16px;
   border-radius: 22px;
   background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
   border: 1px solid var(--line);
   min-width: 0;
-  justify-items: center;
 }
 
 .board {
-  --board-size: min(560px, 100%);
   display: grid;
   grid-template-columns: repeat(8, 1fr);
   grid-template-rows: repeat(8, 1fr);
   width: var(--board-size);
   height: var(--board-size);
+  max-width: 100%;
   border-radius: 12px;
   overflow: hidden;
   border: 4px solid #2a1810;
@@ -347,15 +347,18 @@ button { cursor: pointer; }
 .win-card p { margin: 0 0 20px; color: var(--muted); }
 
 @media (max-width: 880px) {
+  :root { --board-size: 440px; }
   .layout { grid-template-columns: 1fr; }
   .mode-toggle { width: 100%; }
   .mode-btn { flex: 1; }
-  .board { --board-size: min(480px, 100%); }
 }
 @media (max-width: 480px) {
+  :root { --board-size: 340px; }
   .shell { padding: 10px; }
   .brand small { display: none; }
   .board-wrap { padding: 10px; }
   .side-card { padding: 14px; }
-  .board { --board-size: min(360px, 100%); }
+}
+@media (max-width: 360px) {
+  :root { --board-size: 300px; }
 }
